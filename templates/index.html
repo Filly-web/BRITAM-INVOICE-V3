@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TRA EFD Verification Portal</title>
+  <style>
+    :root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#172033;background:#f4f7fb}
+    *{box-sizing:border-box}body{margin:0}.top{background:#102b50;color:white;padding:24px max(20px,calc((100% - 1050px)/2))}
+    .top h1{margin:0 0 6px;font-size:25px}.top p{margin:0;color:#d5e1f1}
+    main{max-width:1050px;margin:26px auto;padding:0 18px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .card{background:white;border:1px solid #e2e8f0;border-radius:13px;padding:20px;box-shadow:0 4px 15px #152c4d0a}
+    .stat{font-size:30px;font-weight:750;margin-top:5px}.muted{color:#63718a;font-size:14px}
+    label{display:block;font-weight:650;margin:16px 0 7px}input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-size:15px}
+    input[type=file]{background:#fff}button{margin-top:20px;background:#1769aa;color:white;border:0;border-radius:8px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer}
+    button:hover{background:#10558d}.nav{display:flex;gap:16px;margin-bottom:18px}.nav a{color:#1769aa;text-decoration:none;font-weight:650}
+    .flash{padding:12px 14px;border-radius:8px;margin:12px 0}.error{background:#fff0f0;color:#9b1c1c;border:1px solid #ffcaca}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}th,td{text-align:left;padding:10px;border-bottom:1px solid #e8edf4;overflow-wrap:anywhere}th{color:#63718a}
+    .table-wrap{overflow-x:auto}.hint{margin-top:8px;line-height:1.5}.empty{padding:16px 0;color:#63718a}
+    @media(max-width:600px){.stats{grid-template-columns:1fr}.top h1{font-size:21px}}
+  </style>
+</head>
+<body>
+<header class="top"><h1>TRA EFD Verification Portal</h1><p>Add TRA verification details and a QR code to a Word invoice.</p></header>
+<main>
+  <div class="nav"><a href="/">Dashboard</a><a href="/history">Processing history</a></div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+  {% endwith %}
+  <section class="stats">
+    <div class="card"><div class="muted">Invoices processed</div><div class="stat">{{ total }}</div></div>
+    <div class="card"><div class="muted">Processed today</div><div class="stat">{{ today }}</div></div>
+  </section>
+  <section class="card">
+    <h2 style="margin-top:0">Process an invoice</h2>
+    <p class="muted">Upload a .docx file. For best placement, put <code>&lt;&lt;EFD_SECTION&gt;&gt;</code> where the verification details should appear.</p>
+    <form action="/process" method="post" enctype="multipart/form-data">
+      <label for="invoice">Word invoice (.docx)</label><input id="invoice" name="invoice" type="file" accept=".docx" required>
+      <label for="verification_code">TRA verification code</label><input id="verification_code" name="verification_code" type="text" maxlength="100" placeholder="Enter verification code" required>
+      <label for="verification_time">Receipt time</label><input id="verification_time" name="verification_time" type="text" placeholder="HH:MM:SS (e.g. 14:05:09)" pattern="([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]|([01][0-9]|2[0-3])[0-5][0-9][0-5][0-9]" required>
+      <p class="muted hint">The portal creates a verification link in the format <code>https://verify.tra.go.tz/CODE_HHMMSS</code> and generates a QR code for that link. Please verify the code and time against the original TRA receipt.</p>
+      <button type="submit">Process and download invoice</button>
+    </form>
+  </section>
+  <section class="card" style="margin-top:18px">
+    <h2 style="margin-top:0">Recent activity</h2>
+    {% if recent %}
+    <div class="table-wrap"><table><thead><tr><th>Date/time</th><th>Original file</th><th>Verification code</th></tr></thead><tbody>
+    {% for row in recent %}<tr><td>{{ row['created_at'] }}</td><td>{{ row['filename'] }}</td><td>{{ row['verification_code'] }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% else %}<div class="empty">No invoices have been processed yet.</div>{% endif %}
+  </section>
+  <p class="muted hint">For internal use. Do not upload sensitive invoices to a publicly exposed server without authentication and access controls.</p>
+</main></body></html>

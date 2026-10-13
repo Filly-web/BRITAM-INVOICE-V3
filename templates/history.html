@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Processing History</title><style>
+body{font-family:Segoe UI,Arial,sans-serif;background:#f4f7fb;color:#172033;margin:0}.top{background:#102b50;color:white;padding:22px max(20px,calc((100% - 1050px)/2))}
+main{max-width:1050px;margin:26px auto;padding:0 18px}.card{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;overflow-x:auto}
+a{color:#1769aa;text-decoration:none;font-weight:650}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px;border-bottom:1px solid #e8edf4;overflow-wrap:anywhere}th{color:#63718a}
+</style></head><body><header class="top"><h1>Processing history</h1><p>Latest 500 records</p></header><main><p><a href="/">← Back to dashboard</a></p>
+<section class="card">{% if records %}<table><thead><tr><th>ID</th><th>Original file</th><th>Verification code</th><th>Verification link</th><th>Created at</th></tr></thead><tbody>
+{% for row in records %}<tr><td>{{ row['id'] }}</td><td>{{ row['filename'] }}</td><td>{{ row['verification_code'] }}</td><td><a href="{{ row['verification_link'] }}" target="_blank" rel="noopener noreferrer">{{ row['verification_link'] }}</a></td><td>{{ row['created_at'] }}</td></tr>{% endfor %}
+</tbody></table>{% else %}<p>No processing records yet.</p>{% endif %}</section></main></body></html>

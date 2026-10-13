@@ -84,7 +84,7 @@ def replace_placeholder_in_paragraph(paragraph, code: str, link: str, qr_path: P
     paragraph.add_run().add_break()
     paragraph.add_run(f"Verification Link: {link}")
     paragraph.add_run().add_break()
-    paragraph.add_run().add_picture(str(qr_path), width=Inches(0.6))
+    paragraph.add_run().add_picture(str(qr_path), width=Inches(0.7))
     return True
 
 
@@ -123,7 +123,7 @@ def process_docx(source: Path, destination: Path, code: str, link: str, qr_path:
     if not inserted:
         doc.add_paragraph(f"Verification Code: {code}")
         doc.add_paragraph(f"Verification Link: {link}")
-        doc.add_picture(str(qr_path), width=Inches(0.6))
+        doc.add_picture(str(qr_path), width=Inches(0.7))
 
     doc.save(str(destination))
 

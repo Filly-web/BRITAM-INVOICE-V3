@@ -121,7 +121,6 @@ def process_docx(source: Path, destination: Path, code: str, link: str, qr_path:
 
     # If the placeholder is absent, append a clearly labelled section instead.
     if not inserted:
-        doc.add_paragraph("EFD Verification Details")
         doc.add_paragraph(f"Verification Code: {code}")
         doc.add_paragraph(f"Verification Link: {link}")
         doc.add_picture(str(qr_path), width=Inches(0.8))
